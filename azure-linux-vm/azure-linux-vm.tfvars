@@ -1,0 +1,8 @@
+rg_name = "rg-terraform-demo"
+vm_name = "vm-terraform-demo"
+vnet_name = "vnet-terraform-demo"
+subnet_name = "snet-terraform-demo"
+public_ip = "pip-terraform-demo"
+nsg_name = "nsg-terraform-demo"
+nic_name = "nic-terraform-demo"
+location = "westeurope"
