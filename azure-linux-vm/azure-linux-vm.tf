@@ -1,14 +1,28 @@
-#https://docs.microsoft.com/en-us/azure/developer/terraform/create-linux-virtual-machine-with-infrastructure
-
 # Variables
 variable "rg_name" {}
 variable "vm_name" {}
 variable "vnet_name" {}
 variable "subnet_name" {}
-variable "public_ip"{}
-variable "nsg_name" {}
-variable "nic_name" {}
 variable "location" {}
+variable "billing_code_tag" {}
+variable "environment_tag" {}
+
+# Locals
+locals {
+    common_tags = {
+        Environment = var.environment_tag
+        BillingCode = var.billing_code_tag
+    }
+
+    nic_name = "nic-${var.vm_name}"
+    public_ip = "pip-${var.vm_name}"
+    nsg_name = "nsg-${var.subnet_name}"
+
+    rg_name = "rg-${var.rg_name}"
+    vm_name = "vm-${var.vm_name}"
+    vnet_name = "vnet-${var.vnet_name}"
+    subnet_name = "snet-${var.subnet_name}" 
+}
 
 # Configure the Microsoft Azure Provider
 terraform {
@@ -25,29 +39,26 @@ provider "azurerm" {
 
 # Create a resource group if it doesn't exist
 resource "azurerm_resource_group" "myterraformgroup" {
-    name     = var.rg_name
+    name     = local.rg_name
     location = var.location
 
-    tags = {
-        environment = "Terraform Demo"
-    }
+    tags = local.common_tags
 }
 
 # Create virtual network
 resource "azurerm_virtual_network" "myterraformnetwork" {
-    name                = var.vnet_name
+    name                = local.vnet_name
     address_space       = ["10.0.0.0/16"]
     location            = var.location
     resource_group_name = azurerm_resource_group.myterraformgroup.name
 
-    tags = {
-        environment = "Terraform Demo"
-    }
+    tags = local.common_tags
+
 }
 
 # Create subnet
 resource "azurerm_subnet" "myterraformsubnet" {
-    name                 = var.subnet_name
+    name                 = local.subnet_name
     resource_group_name  = azurerm_resource_group.myterraformgroup.name
     virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
     address_prefixes       = ["10.0.1.0/24"]
@@ -55,19 +66,17 @@ resource "azurerm_subnet" "myterraformsubnet" {
 
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
-    name                         = var.public_ip
+    name                         = local.public_ip
     location                     = var.location
     resource_group_name          = azurerm_resource_group.myterraformgroup.name
     allocation_method            = "Dynamic"
 
-    tags = {
-        environment = "Terraform Demo"
-    }
+    tags = local.common_tags
 }
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "myterraformnsg" {
-    name                = var.nsg_name
+    name                = local.nsg_name
     location            = var.location
     resource_group_name = azurerm_resource_group.myterraformgroup.name
 
@@ -83,14 +92,12 @@ resource "azurerm_network_security_group" "myterraformnsg" {
         destination_address_prefix = "*"
     }
 
-    tags = {
-        environment = "Terraform Demo"
-    }
+    tags = local.common_tags
 }
 
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
-    name                      = var.nic_name
+    name                      = local.nic_name
     location                  = var.location
     resource_group_name       = azurerm_resource_group.myterraformgroup.name
 
@@ -101,9 +108,7 @@ resource "azurerm_network_interface" "myterraformnic" {
         public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
     }
 
-    tags = {
-        environment = "Terraform Demo"
-    }
+    tags = local.common_tags
 }
 
 # Connect the security group to the network interface
@@ -130,9 +135,7 @@ resource "azurerm_storage_account" "mystorageaccount" {
     account_tier                = "Standard"
     account_replication_type    = "LRS"
 
-    tags = {
-        environment = "Terraform Demo"
-    }
+    tags = local.common_tags
 }
 
 # Create (and display) an SSH key
@@ -147,7 +150,7 @@ output "tls_private_key" {
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "myterraformvm" {
-    name                  = var.vm_name
+    name                  = local.vm_name
     location              = var.location
     resource_group_name   = azurerm_resource_group.myterraformgroup.name
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
@@ -166,7 +169,7 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
         version   = "latest"
     }
 
-    computer_name  = var.vm_name
+    computer_name  = "myvm"
     admin_username = "azureuser"
     disable_password_authentication = true
 
@@ -178,8 +181,5 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     boot_diagnostics {
         storage_account_uri = azurerm_storage_account.mystorageaccount.primary_blob_endpoint
     }
-
-    tags = {
-        environment = "Terraform Demo"
-    }
+    tags = local.common_tags
 }
