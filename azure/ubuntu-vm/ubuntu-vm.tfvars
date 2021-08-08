@@ -1,7 +1,9 @@
-rg_name = "terraform-demo"
-vm_name = "terraform-demo"
-vnet_name = "terraform-demo"
-subnet_name = "terraform-demo"
-location = "westeurope"
+rg_name          = "terraform-demo"
+vm_name          = "terraform-demo"
+vnet_name        = "terraform-demo"
+subnet_name      = "terraform-demo"
+location         = "westeurope"
 billing_code_tag = 4231495
-environment_tag = "DEV"
+environment_tag  = "DEV"
+address_space    = "10.1.0.0/16"
+subnet_count     = 2
