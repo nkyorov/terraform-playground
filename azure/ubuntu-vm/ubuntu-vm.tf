@@ -111,7 +111,7 @@ resource "azurerm_network_interface" "myterraformnic" {
     public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
   }
 
-  tags = local.common_tags
+  tags = merge(local.common_tags, { Subnet = azurerm_subnet.myterraformsubnet[0].name})
 }
 
 # Connect the security group to the network interface
@@ -184,5 +184,5 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.mystorageaccount.primary_blob_endpoint
   }
-  tags = local.common_tags
+  tags = merge(local.common_tags, {Subnet = azurerm_subnet.myterraformsubnet[0].name})
 }
