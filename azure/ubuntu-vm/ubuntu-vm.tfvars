@@ -6,4 +6,5 @@ location         = "westeurope"
 billing_code_tag = 4231495
 environment_tag  = "DEV"
 address_space    = "10.1.0.0/16"
-subnet_count     = 2
+subnet_count     = 3
+instance_count   = 5

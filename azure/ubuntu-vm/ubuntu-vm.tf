@@ -8,6 +8,7 @@ variable "billing_code_tag" {}
 variable "environment_tag" {}
 variable "address_space" {}
 variable "subnet_count" {}
+variable "instance_count" {}
 
 # Locals
 locals {
@@ -69,7 +70,8 @@ resource "azurerm_subnet" "myterraformsubnet" {
 
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
-  name                = local.public_ip
+  count               = var.instance_count
+  name                = "${local.public_ip}-00${count.index + 1}"
   location            = var.location
   resource_group_name = azurerm_resource_group.myterraformgroup.name
   allocation_method   = "Dynamic"
@@ -100,23 +102,25 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
-  name                = local.nic_name
+  count               = var.instance_count
+  name                = "${local.nic_name}-00${count.index + 1}"
   location            = var.location
   resource_group_name = azurerm_resource_group.myterraformgroup.name
 
   ip_configuration {
-    name                          = "myNicConfiguration"
-    subnet_id                     = azurerm_subnet.myterraformsubnet[0].id
+    name                          = "cfg-00${count.index + 1}"
+    subnet_id                     = azurerm_subnet.myterraformsubnet[count.index % var.subnet_count].id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
+    public_ip_address_id          = azurerm_public_ip.myterraformpublicip[count.index].id
   }
 
-  tags = merge(local.common_tags, { Subnet = azurerm_subnet.myterraformsubnet[0].name})
+  tags = merge(local.common_tags, { Subnet = azurerm_subnet.myterraformsubnet[count.index % var.subnet_count].name })
 }
 
 # Connect the security group to the network interface
 resource "azurerm_network_interface_security_group_association" "example" {
-  network_interface_id      = azurerm_network_interface.myterraformnic.id
+  count                     = var.instance_count
+  network_interface_id      = azurerm_network_interface.myterraformnic[count.index].id
   network_security_group_id = azurerm_network_security_group.myterraformnsg.id
 }
 
@@ -153,14 +157,15 @@ output "tls_private_key" {
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "myterraformvm" {
-  name                  = local.vm_name
+  count                 = var.instance_count
+  name                  = "${local.vm_name}-00${count.index + 1}"
   location              = var.location
   resource_group_name   = azurerm_resource_group.myterraformgroup.name
-  network_interface_ids = [azurerm_network_interface.myterraformnic.id]
-  size                  = "Standard_DS1_v2"
+  network_interface_ids = [azurerm_network_interface.myterraformnic[count.index].id]
+  size                  = "Standard_B2s"
 
   os_disk {
-    name                 = "myOsDisk"
+    name                 = "DataDisk-${var.vm_name}-00${count.index + 1}"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
@@ -172,7 +177,7 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     version   = "latest"
   }
 
-  computer_name                   = "myvm"
+  computer_name                   = "${var.vm_name}-00${count.index + 1}"
   admin_username                  = "azureuser"
   disable_password_authentication = true
 
@@ -184,5 +189,5 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.mystorageaccount.primary_blob_endpoint
   }
-  tags = merge(local.common_tags, {Subnet = azurerm_subnet.myterraformsubnet[0].name})
+  tags = merge(local.common_tags, { Subnet = azurerm_subnet.myterraformsubnet[count.index % var.subnet_count].name })
 }
