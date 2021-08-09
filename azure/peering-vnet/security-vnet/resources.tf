@@ -56,6 +56,10 @@ resource "azuread_service_principal" "sp" {
   application_id = azuread_application.app.application_id
 }
 
+resource "azuread_service_principal_password" "pass" {
+  service_principal_id = azuread_service_principal.sp.id
+}
+
 # Create role definition
 resource "azurerm_role_definition" "role_definition" {
   name  = "allow-vnet-peering"
@@ -101,10 +105,10 @@ resource "local_file" "windows" {
   filename = "${path.module}/ids.txt"
   content  = <<EOF
 $env:TF_VAR_sec_vnet_id="${module.vnet-security.vnet_id}"
-
 $env:TF_VAR_sec_vnet_name="${module.vnet-security.vnet_name}"
 $env:TF_VAR_sec_sub_id="${data.azurerm_subscription.current.subscription_id}"
 $env:TF_VAR_sec_client_id="${azuread_service_principal.sp.application_id}"
+$env:TF_VAR_sec_client_secret="${azuread_service_principal_password.pass.value}"
 $env:TF_VAR_sec_principal_id="${azuread_service_principal.sp.id}"
 $env:TF_VAR_sec_resource_group="${var.resource_group_name}"
 $env:TF_VAR_sec_tenant_id="${data.azurerm_subscription.current.tenant_id}"

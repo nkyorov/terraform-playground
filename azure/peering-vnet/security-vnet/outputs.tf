@@ -13,3 +13,7 @@ output "service_principal_client_id" {
 output "resource_group_name" {
   value = var.resource_group_name
 }
+
+output "pass" {
+  value = nonsensitive(azuread_service_principal_password.pass.value)
+}
