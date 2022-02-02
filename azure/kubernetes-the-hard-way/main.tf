@@ -41,3 +41,12 @@ resource "azurerm_network_security_group" "nsg" {
     }
   }
 }
+
+# Create VNET
+module "network" {
+  source              = "Azure/network/azurerm"
+  resource_group_name = azurerm_resource_group.rg.name
+  address_spaces      = var.address_spaces
+  subnet_prefixes     = var.subnet_prefixes
+  subnet_names        = var.subnet_names
+}

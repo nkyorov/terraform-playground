@@ -2,6 +2,10 @@ variable "rg_name" {}
 variable "rg_location" {}
 variable "nsg_name" {}
 
+variable "vnet_address_spaces" {}
+variable "subnet_prefixes" {}
+variable "subnet_names" {}
+
 locals {
   nsg_security_rules = [{
     name                       = ""
@@ -15,5 +19,6 @@ locals {
     source_address_prefix      = ""
     destination_address_prefix = ""
     description                = ""
-    }]
+  }]
 }
+
