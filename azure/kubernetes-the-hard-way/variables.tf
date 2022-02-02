@@ -31,11 +31,28 @@ variable "lb_name" {
 }
 
 variable "pip_lb_name" {
-    type = string
+  type = string
 }
 
 variable "pip_lb_alloc" {
-    type = string
+  type = string
+}
+
+variable "avail_set_name" {
+  type = string
+}
+
+variable "os_image" {
+  type = map(string)
+}
+
+variable "vm_size" {
+  type = string
+}
+
+variable "controllers_count" {
+  type = number
+
 }
 
 variable "tags" {
@@ -72,3 +89,9 @@ locals {
   }]
 }
 
+locals {
+  k8s_controller_prefix = "k8s_controller"
+  k8s_worker_prefix     = "k8s_worker"
+  pip_controller_prefix = "pip-${local.k8s_controller_prefix}"
+  pip_worker_prefix     = "pip-${local.k8s_worker_prefix}"
+}
