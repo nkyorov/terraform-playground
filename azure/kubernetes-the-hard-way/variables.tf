@@ -38,7 +38,11 @@ variable "pip_lb_alloc" {
   type = string
 }
 
-variable "avail_set_name" {
+variable "controllers_avail_set_name" {
+  type = string
+}
+
+variable "workers_avail_set_name" {
   type = string
 }
 
@@ -52,7 +56,10 @@ variable "vm_size" {
 
 variable "controllers_count" {
   type = number
+}
 
+variable "workers_count" {
+  type = number
 }
 
 variable "tags" {
