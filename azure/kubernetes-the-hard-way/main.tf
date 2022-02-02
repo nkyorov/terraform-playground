@@ -60,3 +60,30 @@ module "network" {
 
   tags = var.tags
 }
+
+resource "azurerm_public_ip" "pip_lb" {
+  name                = var.pip_lb_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  allocation_method   = var.pip_lb_alloc
+
+  tags = var.tags
+}
+
+resource "azurerm_lb" "lb" {
+  name                = var.lb_name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  frontend_ip_configuration {
+    name                 = "LoadBalancerFrontEnd"
+    public_ip_address_id = azurerm_public_ip.pip_lb.id
+  }
+
+  tags = var.tags
+}
+
+resource "azurerm_lb_backend_address_pool" "lb_backend_addr_pool" {
+  loadbalancer_id = azurerm_lb.lb.id
+  name            = "kubernetes-lb-pool"
+}

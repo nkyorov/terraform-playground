@@ -26,6 +26,18 @@ variable "vnet_name" {
   type = string
 }
 
+variable "lb_name" {
+  type = string
+}
+
+variable "pip_lb_name" {
+    type = string
+}
+
+variable "pip_lb_alloc" {
+    type = string
+}
+
 variable "tags" {
   type    = map(any)
   default = {}
