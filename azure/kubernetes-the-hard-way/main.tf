@@ -16,6 +16,7 @@ provider "azurerm" {
 resource "azurerm_resource_group" "rg" {
   name     = var.rg_name
   location = var.rg_location
+  tags     = var.tags
 }
 
 # For the subnet
@@ -40,13 +41,22 @@ resource "azurerm_network_security_group" "nsg" {
       description                = security_rule.value.description
     }
   }
+  tags = var.tags
 }
 
 # Create VNET
 module "network" {
   source              = "Azure/network/azurerm"
   resource_group_name = azurerm_resource_group.rg.name
-  address_spaces      = var.address_spaces
+  vnet_name           = var.vnet_name
+  address_spaces      = var.vnet_address_spaces
   subnet_prefixes     = var.subnet_prefixes
   subnet_names        = var.subnet_names
+
+
+  depends_on = [
+    azurerm_resource_group.rg
+  ]
+
+  tags = var.tags
 }
