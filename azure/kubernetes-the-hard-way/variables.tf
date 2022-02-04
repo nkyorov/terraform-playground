@@ -3,7 +3,7 @@ variable "rg_name" {
   description = "All resources will be deployed here."
 }
 
-variable "rg_location" {
+variable "location" {
   type = string
   description = "The Azure location of all resources."
 }

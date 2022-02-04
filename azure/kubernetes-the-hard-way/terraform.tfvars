@@ -1,5 +1,5 @@
 rg_name     = "kubernetes"
-rg_location = "westeurope"
+location = "westeurope"
 
 vnet_name           = "kubernetes-vnet"
 vnet_address_spaces = ["10.240.0.0/24"]
