@@ -12,13 +12,13 @@ lb_name      = "kubernetes-lb"
 pip_lb_name  = "kubernetes-pip"
 pip_lb_alloc = "Static"
 
-controllers_avail_set_name    = "controllers-as"
-workers_avail_set_name    = "workers-as"
+controllers_avail_set_name = "controllers-as"
+workers_avail_set_name     = "workers-as"
 
 
 vm_size           = "Standard_B2s"
 controllers_count = 3
-workers_count = 2 
+workers_count     = 2
 
 
 os_image = {
