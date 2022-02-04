@@ -37,6 +37,11 @@ module "network" {
   tags = var.tags
 }
 
+resource "azurerm_subnet_network_security_group_association" "network_security_group_association" {
+  subnet_id                 = module.network.vnet_subnets[0]
+  network_security_group_id = azurerm_network_security_group.network_security_group.id
+}
+
 resource "azurerm_public_ip" "public_ip_lb" {
   name                = var.pip_lb_name
   resource_group_name = azurerm_resource_group.resource_group.name
