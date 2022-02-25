@@ -29,7 +29,9 @@ resource "azurerm_virtual_machine_extension" "oms_extension" {
 
  protected_settings = <<-PROTECTED_SETTINGS
  {
-   "workspaceKey" : "${azurerm_log_analytics_workspace.log_analytics_workspace.primary_shared_key}"
+   "workspaceKey" : "${azurerm_log_analytics_workspace.log_analytics_workspace.primary_shared_key}",
+   "proxy" : "${var.oms_proxy}"
  }
  PROTECTED_SETTINGS
+ 
 }

@@ -52,3 +52,4 @@
 
   log_analytics_workspace_name = "lasc16nskweu"
   log_analyics_rg_name = "rg-loganalytics-weu"
+  oms_proxy = ""
