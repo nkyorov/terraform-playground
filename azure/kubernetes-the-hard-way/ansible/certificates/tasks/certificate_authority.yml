@@ -1,0 +1,12 @@
+- name: Copy the CA files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ certificate_authority_dir }}/"
+  with_items: 
+    - "ca-config.json"
+    - "ca-csr.json"
+
+- name: Create the Certificate Authority(CA) configuration file
+  shell: "cfssl gencert -initca ca-csr.json | cfssljson -bare ca"
+  args:
+    chdir: "{{ certificate_authority_dir }}"

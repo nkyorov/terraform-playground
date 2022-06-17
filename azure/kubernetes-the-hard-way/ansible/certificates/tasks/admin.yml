@@ -1,0 +1,15 @@
+- name: Copy the admin files
+  copy:
+    src: "{{ admin_csr }}"
+    dest: "{{ admin_dir }}/"
+
+- name: Create the admin certificate and private key
+  shell: >
+    cfssl gencert 
+    -ca="{{ certificate_authority }}"
+    -ca-key="{{ certificate_authority_key }}"
+    -config="{{ certificate_authority_config }}"
+    -profile=kubernetes 
+    "{{ admin_csr }}" | cfssljson -bare admin
+  args:
+    chdir: "{{ admin_dir }}"

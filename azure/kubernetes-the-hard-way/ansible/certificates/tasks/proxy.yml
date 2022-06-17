@@ -1,0 +1,15 @@
+- name: Copy the proxy files
+  copy:
+    src: "{{ proxy_csr }}"
+    dest: "{{ proxy_dir }}/"
+
+- name: Create the proxy certificate and private key
+  shell: >
+    cfssl gencert 
+    -ca="{{ certificate_authority }}"
+    -ca-key="{{ certificate_authority_key }}"
+    -config="{{ certificate_authority_config }}"
+    -profile=kubernetes 
+    "{{ proxy_csr }}" | cfssljson -bare kube-proxy
+  args:
+    chdir: "{{ proxy_dir }}"

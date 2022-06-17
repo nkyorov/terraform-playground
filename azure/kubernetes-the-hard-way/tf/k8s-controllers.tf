@@ -76,7 +76,7 @@ resource "azurerm_linux_virtual_machine" "k8s_controllers" {
 
   admin_ssh_key {
     username   = "kuberoot"
-    public_key = file("~/.ssh/id_rsa.pub")
+    public_key = file("~/.ssh/azureuser.pub")
   }
   tags = var.tags
 }
