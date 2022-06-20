@@ -1,0 +1,15 @@
+- name: Copy the scheduler files
+  copy:
+    src: "{{ scheduler_csr }}"
+    dest: "{{ scheduler_dir }}/"
+
+- name: Create the scheduler certificate and private key
+  shell: >
+    cfssl gencert 
+    -ca="{{ certificate_authority }}"
+    -ca-key="{{ certificate_authority_key }}"
+    -config="{{ certificate_authority_config }}"
+    -profile=kubernetes
+    "{{ scheduler_csr }}" | cfssljson -bare kube-scheduler
+  args:
+    chdir: "{{ scheduler_dir }}"

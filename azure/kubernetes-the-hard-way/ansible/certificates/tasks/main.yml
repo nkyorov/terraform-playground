@@ -1,0 +1,11 @@
+- name: Create certificates
+  include_tasks: "{{ item }}.yml"
+  with_items:
+    - certificate_authority
+    - admin
+    - worker
+    - controller_manager
+    - proxy
+    - scheduler
+    - kubernetes
+    - service_account

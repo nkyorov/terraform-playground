@@ -1,0 +1,16 @@
+- name: Copy the kubernetes files
+  copy:
+    src: "{{ kubernetes_csr }}"
+    dest: "{{ kubernetes_dir }}/"
+
+- name: Create the API server certificate and private key
+  shell: >
+    cfssl gencert
+    -ca="{{ certificate_authority }}"
+    -ca-key="{{ certificate_authority_key }}"
+    -config="{{ certificate_authority_config }}"
+    -hostname=10.32.0.1,10.240.0.10,10.240.0.11,10.240.0.12,"{{ kubernetes_public_ip }}",127.0.0.1,"{{ kubernetes_hostnames }}"
+    -profile=kubernetes
+    "{{ kubernetes_csr }}" | cfssljson -bare kubernetes
+  args:
+    chdir: "{{ kubernetes_dir }}"

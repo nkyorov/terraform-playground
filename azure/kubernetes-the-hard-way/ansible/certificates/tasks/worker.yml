@@ -1,0 +1,25 @@
+- name: Create directories
+  file:
+    path: "{{ base_dir }}/{{ item.hostname }}"
+    state: directory
+  with_items: "{{ kubernetes_workers }}"
+
+
+- name: Copy the worker files
+  template:
+    src: "worker-csr.json.j2"
+    dest: "{{ base_dir }}/{{ item.hostname }}/{{ item.hostname }}-csr.json"
+  with_items: "{{ kubernetes_workers }}"
+
+- name: Create the workers certificate and private key
+  shell: >
+    cfssl gencert
+    -ca="{{ certificate_authority }}"
+    -ca-key="{{ certificate_authority_key }}"
+    -config="{{ certificate_authority_config }}"
+    -hostname="{{ item.hostname }}","{{ kubernetes_public_ip }}","{{ item.internalIP }}"
+    -profile=kubernetes
+    "{{ item.hostname }}"-csr.json | cfssljson -bare "{{ item.hostname }}"
+  args:
+    chdir: "{{ base_dir }}/{{ item.hostname }}"
+  with_items: "{{ kubernetes_workers }}"

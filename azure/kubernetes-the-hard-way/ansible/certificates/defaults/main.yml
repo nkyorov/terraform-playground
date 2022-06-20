@@ -1,0 +1,35 @@
+---
+base_dir: "/home/nkyorov/certificates"
+
+# Certificate Authority
+certificate_authority_dir: "{{ base_dir }}/certificate_authority"
+certificate_authority: "{{ base_dir }}/certificate_authority/ca.pem"
+certificate_authority_key: "{{ base_dir }}/certificate_authority/ca-key.pem"
+certificate_authority_config: "{{ base_dir }}/certificate_authority/ca-config.json"
+certificate_authority_csr: "{{ base_dir }}/certificate_authority/ca-csr.json"
+
+# Controller-Manager
+controller_manager_dir:  "{{ base_dir }}/controller-manager/"
+controller_manager_csr: "kube-controller-manager-csr.json"
+
+# Proxy
+proxy_dir: "{{ base_dir }}/proxy"
+proxy_csr: "kube-proxy-csr.json"
+
+# Admin
+admin_dir: "{{ base_dir }}/admin"
+admin_csr: "admin-csr.json"
+
+# Scheduler
+scheduler_dir: "{{ base_dir }}/scheduler"
+scheduler_csr: "kube-scheduler-csr.json"
+
+# Kubernetes
+kubernetes_dir: "{{ base_dir }}/kubernetes"
+kubernetes_csr: "kubernetes-csr.json"
+
+# Service Account
+svc_account_dir: "{{ base_dir }}/service-account"
+svc_account_csr: "service-account-csr.json"
+
+kubernetes_hostnames: "kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"

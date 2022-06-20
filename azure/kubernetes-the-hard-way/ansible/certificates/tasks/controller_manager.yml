@@ -1,0 +1,15 @@
+- name: Copy the controller manager files
+  copy:
+    src: "{{ controller_manager_csr }}"
+    dest: "{{ controller_manager_dir }}/"
+
+- name: Create the controller manager certificate and private key
+  shell: >
+    cfssl gencert 
+    -ca="{{ certificate_authority }}"
+    -ca-key="{{ certificate_authority_key }}"
+    -config="{{ certificate_authority_config }}"
+    -profile=kubernetes 
+    "{{ controller_manager_csr }}" | cfssljson -bare kube-controller-manager
+  args:
+    chdir: "{{ controller_manager_dir }}"
